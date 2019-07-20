@@ -6,6 +6,10 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 object Main {
+
+  final case class UserId(value: Long) extends AnyVal
+  final case class Name(value: String) extends AnyVal
+
   def main(args: Array[String]): Unit = {
     import Tables.profile.api._
 
@@ -15,14 +19,14 @@ object Main {
     val query = for {
       user <- Tables.Users
     } yield (
-      user.id,
-      user.name,
+      user.id.mapTo[UserId],
+      user.name.mapTo[Name],
       user.age,
     )
 
-    val action: DBIO[Seq[(Long, String, Option[Int])]] = query.result
+    val action: DBIO[Seq[(UserId, Name, Option[Int])]] = query.result
 
-    val resultFuture: Future[Seq[(Long, String, Option[Int])]] = db.run(action)
+    val resultFuture: Future[Seq[(UserId, Name, Option[Int])]] = db.run(action)
 
     // 本番で使うべからず
     import scala.concurrent.ExecutionContext.Implicits.global
