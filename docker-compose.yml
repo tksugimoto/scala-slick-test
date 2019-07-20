@@ -1,0 +1,14 @@
+version: '2.4'
+
+services:
+  mariadb:
+    image: mariadb:10.4
+    volumes:
+      - ./read-model/init:/docker-entrypoint-initdb.d
+    ports:
+      - "${mariadb_ip_port:-127.0.0.1:3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${mysql_root_password:-root}"
+      MYSQL_DATABASE: "${mysql_database:-test}"
+      MYSQL_USER: "${mysql_user:-user}"
+      MYSQL_PASSWORD: "${mysql_password:-password}"
