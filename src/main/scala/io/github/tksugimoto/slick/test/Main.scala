@@ -37,7 +37,17 @@ object Main {
       _ <- {
         val name = Name(s"Dummy ${LocalDateTime.now()}")
         db.run(
-          Tables.Users.map(_.name.mapTo[Name]) += name,
+          Tables.Users.map { user =>
+            (
+              user.name.mapTo[Name],
+              user.age,
+            )
+          } += {
+            (
+              name,
+              Option(20),
+            )
+          },
         )
       }
       _ <- resultFuture map { users =>
