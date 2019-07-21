@@ -1,5 +1,7 @@
 package io.github.tksugimoto.slick.test
 
+import java.time.LocalDateTime
+
 import io.github.tksugimoto.slick.test.models.Tables
 
 import scala.concurrent.Future
@@ -31,7 +33,16 @@ object Main {
     // 本番で使うべからず
     import scala.concurrent.ExecutionContext.Implicits.global
 
+    // AutoInc の場合、どんな値を指定しても無視される（が、指定は必要）
+    val dummyId = 0L
+
     (for {
+      _ <- db.run(
+        Tables.Users += Tables.UsersRow(
+          id = dummyId,
+          name = s"Dummy ${LocalDateTime.now()}",
+        ),
+      )
       _ <- resultFuture map { users =>
         users.foreach(println)
       }
