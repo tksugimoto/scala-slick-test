@@ -18,7 +18,7 @@ trait Tables {
   def ddl = schema
 
   /** Entity class storing rows of table Users
-    *  @param id Database column id SqlType(BIGINT), PrimaryKey
+    *  @param id Database column id SqlType(BIGINT), AutoInc, PrimaryKey
     *  @param name Database column name SqlType(VARCHAR), Length(50,true)
     *  @param age Database column age SqlType(INT), Default(None) */
   case class UsersRow(id: Long, name: String, age: Option[Int] = None)
@@ -48,8 +48,8 @@ trait Tables {
           throw new Exception("Inserting into ? projection not supported."),
       )
 
-    /** Database column id SqlType(BIGINT), PrimaryKey */
-    val id: Rep[Long] = column[Long]("id", O.PrimaryKey)
+    /** Database column id SqlType(BIGINT), AutoInc, PrimaryKey */
+    val id: Rep[Long] = column[Long]("id", O.AutoInc, O.PrimaryKey)
 
     /** Database column name SqlType(VARCHAR), Length(50,true) */
     val name: Rep[String] = column[String]("name", O.Length(50, varying = true))
