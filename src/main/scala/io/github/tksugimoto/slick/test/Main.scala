@@ -34,9 +34,12 @@ object Main {
     import scala.concurrent.ExecutionContext.Implicits.global
 
     (for {
-      _ <- db.run(
-        Tables.Users.map(_.name) += s"Dummy ${LocalDateTime.now()}",
-      )
+      _ <- {
+        val name = Name(s"Dummy ${LocalDateTime.now()}")
+        db.run(
+          Tables.Users.map(_.name.mapTo[Name]) += name,
+        )
+      }
       _ <- resultFuture map { users =>
         users.foreach(println)
       }
