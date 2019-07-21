@@ -3,7 +3,7 @@ package io.github.tksugimoto.slick.test
 import io.github.tksugimoto.slick.test.models.Tables
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.Failure
 
 object Main {
 
@@ -31,10 +31,13 @@ object Main {
     // 本番で使うべからず
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    resultFuture
+    (for {
+      _ <- resultFuture map { users =>
+        users.foreach(println)
+      }
+    } yield ())
       .andThen {
-        case Success(users) => users.foreach(println)
-        case Failure(ex)    => ex.printStackTrace()
+        case Failure(ex) => ex.printStackTrace()
       }
       .andThen {
         case _ => db.close()
