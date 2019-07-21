@@ -33,15 +33,9 @@ object Main {
     // 本番で使うべからず
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    // AutoInc の場合、どんな値を指定しても無視される（が、指定は必要）
-    val dummyId = 0L
-
     (for {
       _ <- db.run(
-        Tables.Users += Tables.UsersRow(
-          id = dummyId,
-          name = s"Dummy ${LocalDateTime.now()}",
-        ),
+        Tables.Users.map(_.name) += s"Dummy ${LocalDateTime.now()}",
       )
       _ <- resultFuture map { users =>
         users.foreach(println)
