@@ -20,29 +20,36 @@ trait Tables {
   /** Entity class storing rows of table Users
     *  @param id Database column id SqlType(BIGINT), AutoInc, PrimaryKey
     *  @param name Database column name SqlType(VARCHAR), Length(50,true)
-    *  @param age Database column age SqlType(INT), Default(None) */
-  case class UsersRow(id: Long, name: String, age: Option[Int] = None)
+    *  @param age Database column age SqlType(INT), Default(None)
+    *  @param address Database column address SqlType(VARCHAR), Length(50,true), Default(Some(NULL)) */
+  case class UsersRow(
+      id: Long,
+      name: String,
+      age: Option[Int] = None,
+      address: Option[String] = Some("NULL"),
+  )
 
   /** GetResult implicit for fetching UsersRow objects using plain SQL queries */
   implicit def GetResultUsersRow(
       implicit e0: GR[Long],
       e1: GR[String],
       e2: GR[Option[Int]],
+      e3: GR[Option[String]],
   ): GR[UsersRow] = GR { prs =>
     import prs._
-    UsersRow.tupled((<<[Long], <<[String], <<?[Int]))
+    UsersRow.tupled((<<[Long], <<[String], <<?[Int], <<?[String]))
   }
 
   /** Table description of table users. Objects of this class serve as prototypes for rows in queries. */
   class Users(_tableTag: Tag)
       extends profile.api.Table[UsersRow](_tableTag, Some("test"), "users") {
-    def * = (id, name, age) <> (UsersRow.tupled, UsersRow.unapply)
+    def * = (id, name, age, address) <> (UsersRow.tupled, UsersRow.unapply)
 
     /** Maps whole row to an option. Useful for outer joins. */
     def ? =
-      ((Rep.Some(id), Rep.Some(name), age)).shaped.<>(
+      ((Rep.Some(id), Rep.Some(name), age, address)).shaped.<>(
         { r =>
-          import r._; _1.map(_ => UsersRow.tupled((_1.get, _2.get, _3)))
+          import r._; _1.map(_ => UsersRow.tupled((_1.get, _2.get, _3, _4)))
         },
         (_: Any) =>
           throw new Exception("Inserting into ? projection not supported."),
@@ -56,6 +63,13 @@ trait Tables {
 
     /** Database column age SqlType(INT), Default(None) */
     val age: Rep[Option[Int]] = column[Option[Int]]("age", O.Default(None))
+
+    /** Database column address SqlType(VARCHAR), Length(50,true), Default(Some(NULL)) */
+    val address: Rep[Option[String]] = column[Option[String]](
+      "address",
+      O.Length(50, varying = true),
+      O.Default(Some("NULL")),
+    )
   }
 
   /** Collection-like TableQuery object for table Users */
