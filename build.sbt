@@ -1,5 +1,6 @@
 lazy val slickVersion = "3.3.0"
 lazy val mariadbDriverVersion = "2.4.1"
+lazy val logbackVersion = "1.2.3"
 
 ThisBuild / scalaVersion := "2.12.8"
 ThisBuild / scalacOptions ++= Seq(
@@ -25,6 +26,7 @@ lazy val root = (project in file(".")).settings(
     "com.typesafe.slick" %% "slick" % slickVersion,
     "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
     "org.mariadb.jdbc" % "mariadb-java-client" % mariadbDriverVersion,
+    "ch.qos.logback" % "logback-classic" % logbackVersion,
   ),
 )
 
