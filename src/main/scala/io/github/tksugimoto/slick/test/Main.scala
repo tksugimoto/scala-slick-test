@@ -3,11 +3,14 @@ package io.github.tksugimoto.slick.test
 import java.time.LocalDateTime
 
 import io.github.tksugimoto.slick.test.models.Tables
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.Future
 import scala.util.Failure
 
 object Main {
+
+  private val logger = LoggerFactory.getLogger(this.getClass)
 
   final case class UserId(value: Long) extends AnyVal
   final case class Name(value: String) extends AnyVal
@@ -51,7 +54,9 @@ object Main {
         )
       }
       _ <- resultFuture map { users =>
-        users.foreach(println)
+        users.foreach { user =>
+          logger.info("user: {}", user)
+        }
       }
     } yield ())
       .andThen {
